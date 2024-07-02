@@ -1,71 +1,77 @@
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-enum TextSize {
-  headline(2.0),
-  highest(1.6),
-  high(1.4),
-  over(1.2),
-  moderate(1.0),
-  under(0.8),
-  low(0.6),
-  lowest(0.4);
+import 'package:methylene/thematic/colors.dart';
+import 'package:methylene/thematic/general.dart';
 
-  const TextSize(this.factor);
-  final double factor;
-}
+final class Thematic {
+  final ThematicGeneral general;
+  final ThematicColors colors;
+  final ThematicSyntax syntax;
+  const Thematic._internal({
+    required this.general,
+    required this.colors,
+    required this.syntax,
+  });
+  static Future<Thematic> blueprint() async {
+    Map<String, dynamic> theme = jsonDecode(await rootBundle.loadString('assets/blueprint/theme/default_theme.json'));
 
+  }
+  static Thematic fromJson(String content) {
+    Map<String, dynamic> theme = jsonDecode(content);
+    Map<String, dynamic>? general = theme['general'];
+    Map<String, dynamic>? text = general?['text'];
+    Map<String, dynamic>? fontScaleFactorLevel = text?['font_scale_factor_level'];
+    Map<String, dynamic>? geometry = general?['geometry'];
+    Map<String, dynamic>? insets = geometry?['insets'];
+    Map<String, dynamic>? rounding = geometry?['rounding'];
+    return Thematic._internal(
+      general: ThematicGeneral(
+          symbolScaleFactor: general?['symbol_scale_factor'],
+          interfaceScaleFactor: general?['interface_scale_factor'],
+          text: ThematicGeneralText(
+              font: text?['font'],
+              fontScaleFactor: text?['font_scale_factor'],
+              fontScaleFactorLevel: ThematicGeneralFactorLevel(
+                  highest: fontScaleFactorLevel?['highest'],
+                  high: fontScaleFactorLevel?['high'],
+                  over: fontScaleFactorLevel?['over'],
+                  moderate: fontScaleFactorLevel?['moderate'],
+                  under: fontScaleFactorLevel?['under'],
+                  low: fontScaleFactorLevel?['low:'],
+                  lowest: fontScaleFactorLevel?['lowest'],
+              )),
+          geometry: ThematicGeneralGeometry(
+            insets: ThematicGeneralGeometryInsets(
+              factor: insets?['factor'],
+              factorLevel: insets?['factor_level']
+            ),
+            rounding: ThematicGeneralGeometryRounding(
+              factor: rounding?['factor'],
+              factorLevel: rounding?['factor_level']
+            )
+          ),
+      ),
+        colors: ThematicColors(
 
-enum InsetsLevel {
-  highest(3.3),
-  high(2.8),
-  over(2.5),
-  moderate(2.0),
-  under(1.9),
-  low(1.7),
-  lowest(1.5);
-
-  const InsetsLevel(this.value);
-  final double value;
-}
-
-enum RoundedLevel {
-  highest(3.3),
-  high(2.8),
-  over(2.5),
-  moderate(2.0),
-  under(1.9),
-  low(1.7),
-  lowest(1.5);
-
-  const  RoundedLevel(this.value);
-  final double value;
-}
-
-
-abstract final class ThematicColors {
-  static const Color exciplit = Color(0xFF181818);
-  static const Color background = Color(0xFF292B2D);
-  static const Color elementUnselected = Color(0xFF9B9EA2);
-  static const Color elementSelected = Color(0xFFFFFFFF);
-  static const Color text = Color(0xFFFFFFFF);
-  static const Color textGrayed = Color(0xFFB6B6B6);
-  static const Color accent = Color(0xFFB47563);
-}
-
-
-abstract final class ThematicStyles {
-  static const String font = 'Varela Round';
-  static const double borderRadiusFactor = 1.0;
-  static const double edgeInsetsFactor = 1.0;
-
-  static TextStyle text({TextSize? size, Color? color, bool? bold}) => GoogleFonts.getFont(
-    font,
-    fontSize: size != null ? 18 * size.factor : 18,
-    color: color != null ? color : ThematicColors.text,
-    fontWeight: bold != null && bold == true ? FontWeight.bold : FontWeight.normal
+        ),
+        syntax: null
+    );
+  }
+  TextStyle text({double? size, Color? color, bool? bold}) => GoogleFonts.getFont(
+      general.text.font,
+      fontSize: general.text.,
+      color: color != null ? color : ThematicColors.text,
+      fontWeight: bold != null && bold == true ? FontWeight.bold : FontWeight.normal
   );
 }
+Type getValueOrStandard<Type>(Type? value, Type standard) {
+  return value != null ? value : standard;
+}
+
+
 
 abstract final class ThematicGeometry {
   static EdgeInsetsGeometry edgeInsets({
