@@ -11,7 +11,7 @@ Methylene provides the design and logic core for Flutter Dioxide applications an
    * ```
      import 'package:methylene/core' as core;
      void main() {
-       FlutterWidgetBindings.ensureInitizalized();
+       WidgetsFlutterBinding.ensureInitialized();
        core.loadEnvoirenment();
      }
      ```
