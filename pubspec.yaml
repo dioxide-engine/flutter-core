@@ -1,20 +1,19 @@
-name: dioxide_flutter_core
-description: "Package providing the design and logic core."
+name: methylene
+description: "Package providing the design and logic core for flutter dioxide applications and extensions."
 version: 0.0.1
-homepage: 'https://github.com/dioxide-engine/'
+homepage: 'https://github.com/dioxide-engine/methylene/'
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
   flutter: ">=1.17.0"
-
-dependencies:
-  flutter:
-    sdk: flutter
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+  simple_fx: ^1.0.1
 
 flutter:
-
+  uses-material-design: true
