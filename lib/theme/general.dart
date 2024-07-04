@@ -1,4 +1,4 @@
-import 'package:methylene/thematic.dart';
+import 'package:methylene/theme.dart';
 
 final class ThematicGeneral {
   late final double symbolScaleFactor;
@@ -39,14 +39,14 @@ final class ThematicGeneralFactorLevel {
   late final double under;
   late final double low;
   late final double lowest;
-  ThematicGeneralFactorLevel({
-    double? highest,
-    double? high,
-    double? over,
-    double? moderate,
-    double? under,
-    double? low,
-    double? lowest
+  ThematicGeneralFactorLevel._internal({
+    required this.highest,
+    required this.high,
+    required this.over,
+    required this.moderate,
+    required this.under,
+    required this.low,
+    required this.lowest
   }) {
     this.highest = getValueOrStandard<double>(highest, standard);
     this.high = getValueOrStandard<double>(high, standard);
@@ -55,6 +55,18 @@ final class ThematicGeneralFactorLevel {
     this.under = getValueOrStandard<double>(under, standard);
     this.low = getValueOrStandard<double>(low, standard);
     this.lowest = getValueOrStandard<double>(lowest, standard);
+  }
+  static Future<ThematicGeneralFactorLevel> fromJson(Map<String, dynamic>? json) async {
+    Thematic defaultTheme = await getDefaultTheme;
+    return ThematicGeneralFactorLevel._internal(
+      highest: getValueOrStandard<double>(json?['highest'], defaultTheme.
+      high: getValueOrStandard<double>(json?['high'],
+      over:  getValueOrStandard<double>(json?['over'],
+      moderate:  getValueOrStandard<double>(json?['moderate'],
+      under:  getValueOrStandard<double>(json?['under'],
+      low:  getValueOrStandard<double>(json?['low'],
+      lowest:  getValueOrStandard<double>(json?['lowest'],
+    );
   }
 }
 final class ThematicGeneralGeometry {

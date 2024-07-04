@@ -1,4 +1,4 @@
-import 'package:methylene/thematic.dart';
+import 'package:methylene/theme.dart';
 import 'package:flutter/material.dart';
 
 class ThemeGeometryOverride {

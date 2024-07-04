@@ -1,10 +1,31 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:methylene/thematic/colors.dart';
-import 'package:methylene/thematic/general.dart';
+import 'package:methylene/theme/colors.dart';
+import 'package:methylene/theme/general.dart';
+import 'package:methylene/theme/syntax.dart';
+
+export 'package:methylene/theme/colors.dart';
+export 'package:methylene/theme/general.dart';
+export 'package:methylene/theme/syntax.dart';
+
+late final Thematic _defaultTheme;
+bool _isInit = false;
+Future<Thematic> get getDefaultTheme async {
+  if (_isInit) {
+    return _defaultTheme;
+  }
+  _isInit = true;
+  return _defaultTheme = await Thematic.fromJson(
+      jsonDecode(
+          await rootBundle.loadString('assets/blueprint/theme/default_theme.json')
+      )
+  );
+}
+late final Thematic theme;
 
 final class Thematic {
   final ThematicGeneral general;
@@ -15,13 +36,14 @@ final class Thematic {
     required this.colors,
     required this.syntax,
   });
-  static Future<Thematic> blueprint() async {
-    Map<String, dynamic> theme = jsonDecode(await rootBundle.loadString('assets/blueprint/theme/default_theme.json'));
+  static Future<Thematic> fromFile(File file) async {
+    return fromJson(await file.readAsString());
+  }
+  static Thematic fromBlueprint() {
 
   }
-  static Thematic fromJson(String content) {
-    Map<String, dynamic> theme = jsonDecode(content);
-    Map<String, dynamic>? general = theme['general'];
+  static Thematic fromJson(Map<String, dynamic>? json) {
+    Map<String, dynamic>? general = json?['general'];
     Map<String, dynamic>? text = general?['text'];
     Map<String, dynamic>? fontScaleFactorLevel = text?['font_scale_factor_level'];
     Map<String, dynamic>? geometry = general?['geometry'];
