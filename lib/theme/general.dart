@@ -1,47 +1,70 @@
 import 'package:methylene/theme.dart';
 
 
-final class ThematicGeneral {
-  late final double symbolScaleFactor;
-  late final double interfaceScaleFactor;
-  late final ThematicGeneralText text;
-  late final ThematicGeneralGeometry geometry;
+final class ThematicGeneral extends ThematicValue<ThematicGeneral> {
+  final ThematicValue<double> symbolScaleFactor = ThematicValue('symbol_scale_factor', theme.general.symbolScaleFactor.value);
+  final ThematicValue<double> interfaceScaleFactor = ThematicValue('interface_scale_factor', theme.general.interfaceScaleFactor.value);
+  final ThematicGeneralText text = ThematicGeneralText();
+  final ThematicGeneralGeometry geometry = ThematicGeneralGeometry();
   ThematicGeneral({
-    required this.symbolScaleFactor,
-    required this.interfaceScaleFactor,
-    required this.text,
-    required this.geometry,
-  });
-  static ThematicGeneral fromJson(Map<String, dynamic>? json) {
-    return ThematicGeneral(
-      symbolScaleFactor: _getValueOrStandard<double>(json?['symbol_scale_factor'], theme.general.symbolScaleFactor),
-      interfaceScaleFactor: _getValueOrStandard<double>(json?['interface_scale_factor'], theme.general.interfaceScaleFactor),
-      text: _getValueOrStandard<ThematicGeneralText>(ThematicGeneralText.fromJson(json?['text']), theme.general.text),
-      geometry: _getValueOrStandard<ThematicGeneralGeometry>(ThematicGeneralGeometry.fromJson(json?['geometry']), theme.general.geometry),
-    );
+    double? symbolScaleFactor,
+    double? interfaceScaleFactor,
+    ThematicGeneralText? text,
+    ThematicGeneralGeometry? geometry,
+  }) : super('general', theme.general) {
+    this
+      ..symbolScaleFactor.imposeValue(symbolScaleFactor)
+      ..interfaceScaleFactor.imposeValue(interfaceScaleFactor)
+      ..text.imposeValue(text)
+      ..geometry.imposeValue(geometry);
+    setValue(this);
   }
-
+  factory ThematicGeneral.fromJson(Map<String, dynamic>? json) {
+    ThematicGeneral thematicGeneral = ThematicGeneral();
+    thematicGeneral
+      ..symbolScaleFactor.imposeValue(json?[thematicGeneral.symbolScaleFactor.key])
+      ..interfaceScaleFactor.imposeValue(json?[thematicGeneral.interfaceScaleFactor.key])
+      ..text.imposeValue(ThematicGeneralText.fromJson(json?[thematicGeneral.text.key]))
+      ..geometry.imposeValue(ThematicGeneralGeometry.fromJson(json?[thematicGeneral.geometry.key]));
+    thematicGeneral.setValue(thematicGeneral);
+    return thematicGeneral;
+  }
+  Map<String, dynamic> toJson() {
+    setValue(this);
+    return Map.fromEntries([
+      symbolScaleFactor.toEntry(),
+      interfaceScaleFactor.toEntry(),
+      text.toEntry(),
+      geometry.toEntry()
+    ]);
+  }
 }
 
-final class ThematicGeneralText {
-  late final String font;
-  late final double fontScaleFactor;
-  late final ThematicGeneralFactorLevel fontScaleFactorLevel;
+final class ThematicGeneralText extends ThematicValue<ThematicGeneralText> {
+  final ThematicValue<String> font = ThematicValue('font', theme.general.text.font.value);
+  final ThematicValue<double> fontScaleFactor = ThematicValue('font_scale_factor', theme.general.text.fontScaleFactor.value);
+  final ThematicGeneralFactorLevel fontScaleFactorLevel = ;
   ThematicGeneralText({
-    required this.font,
-    required this.fontScaleFactor,
-    required this.fontScaleFactorLevel
-  });
+    String? font,
+    double? fontScaleFactor,
+    ThematicGeneralFactorLevel? fontScaleFactorLevel
+  }) : super('text', theme.general.text);
   static ThematicGeneralText fromJson(Map<String, dynamic>? json) {
     return ThematicGeneralText(
-      font: _getValueOrStandard<String>(json?['font'], theme.general.text.font),
+      font: _getValueOrStandard<String>(json?['font'], theme.general.text.font.value),
       fontScaleFactor: _getValueOrStandard<double>(json?['font_scale_factor'], theme.general.text.fontScaleFactor),
       fontScaleFactorLevel: _getValueOrStandard<ThematicGeneralFactorLevel>(ThematicGeneralFactorLevel.fromJson(json?['font_scale_factor_level']), theme.general.text.fontScaleFactorLevel),
     );
   }
+  Map<String, dynamic> toJson() {
+    setValue(this);
+    return Map.fromEntries([
+
+    ]);
+  }
 }
 
-final class ThematicGeneralFactorLevel {
+final class ThematicGeneralFactorLevel extends ThematicValue<ThematicGeneralFactorLevel> {
   late final double highest;
   late final double high;
   late final double over;
@@ -68,9 +91,12 @@ final class ThematicGeneralFactorLevel {
       low:  _getValueOrStandard<double>(json?['low'], 0.6),
       lowest:  _getValueOrStandard<double>(json?['lowest'], 0.4)
     );
+  Map<String, dynamic> toJson() {
+    return {};
+  }
 }
 
-final class ThematicGeneralGeometry {
+final class ThematicGeneralGeometry extends ThematicValue<ThematicGeneralGeometry> {
   late final ThematicGeneralGeometryInsets insets;
   late final ThematicGeneralGeometryRounding rounding;
   ThematicGeneralGeometry({
@@ -83,9 +109,12 @@ final class ThematicGeneralGeometry {
         rounding: _getValueOrStandard<ThematicGeneralGeometryRounding>(ThematicGeneralGeometryRounding.fromJson(json?['rounding']), theme.general.geometry.rounding)
     );
   }
+  Map<String, dynamic> toJson() {
+    return {};
+  }
 }
 
-final class ThematicGeneralGeometryInsets {
+final class ThematicGeneralGeometryInsets extends ThematicValue<ThematicGeneralGeometryInsets> {
   late final double factor;
   late final ThematicGeneralFactorLevel factorLevel;
   ThematicGeneralGeometryInsets({
@@ -98,9 +127,12 @@ final class ThematicGeneralGeometryInsets {
       factorLevel: _getValueOrStandard<ThematicGeneralFactorLevel>(ThematicGeneralFactorLevel.fromJson(json?['factor_level']), theme.general.geometry.insets.factorLevel),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {};
+  }
 }
 
-final class ThematicGeneralGeometryRounding {
+final class ThematicGeneralGeometryRounding extends ThematicValue<ThematicGeneralGeometryRounding> {
   late final double factor;
   late final ThematicGeneralFactorLevel factorLevel;
   ThematicGeneralGeometryRounding({
@@ -112,6 +144,9 @@ final class ThematicGeneralGeometryRounding {
       factor: _getValueOrStandard<double>(json?['factor'], theme.general.geometry.rounding.factor),
       factorLevel: _getValueOrStandard<ThematicGeneralFactorLevel>(ThematicGeneralFactorLevel.fromJson(json?['factor_level']), theme.general.geometry.rounding.factorLevel),
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {};
   }
 }
 Type _getValueOrStandard<Type>(Type? value, Type standard) {

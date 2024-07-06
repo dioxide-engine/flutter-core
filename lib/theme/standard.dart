@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:methylene/theme.dart';
-abstract final class ThematicStandard {
+abstract final class ThematicMisc {
   static final ThematicGeneralFactorLevel factorLevel = ThematicGeneralFactorLevel(
       highest: 1.6,
       high: 1.4,
@@ -10,7 +10,7 @@ abstract final class ThematicStandard {
       low: 0.6,
       lowest: 0.4
   );
-  static final Thematic theme = Thematic(
+  static final Thematic standardTheme = Thematic(
       general: ThematicGeneral(
           symbolScaleFactor: 1,
           interfaceScaleFactor: 1,
@@ -45,7 +45,7 @@ abstract final class ThematicStandard {
           colorHue: 0,
           background: Color(0xFF292B2D),
           accent: Color(0xFFB47563),
-          exciplit: Color(0xFF181818),
+          explicit: Color(0xFF181818),
           elementSelected: Color(0xFFFFFFFF),
           elementUnselected: Color(0xFF9B9EA2),
           text: Color(0xFFFFFFFF),
@@ -82,10 +82,16 @@ abstract final class ThematicStandard {
 
 }
 
-
-Type nonNullExtraction<Type>(Type? first, Type second) {
-  return first != null ? first : second;
+///
+/// Uses a nullable and a not nullable object
+/// and falls back to the not nullable object if the
+/// nullable is null.
+///
+Type impose<Type>(Type? nullable, Type fallback) {
+  return nullable != null ? nullable : fallback;
 }
-Color parseColor(dynamic nullableOption, Color nonNullableStandard) {
-  return nonNullExtraction<Color>(Color(int.parse(nullableOption)), nonNullableStandard);
+
+
+Color? parseColor(String value) {
+  return Color(int.parse(value, radix: 16));
 }
