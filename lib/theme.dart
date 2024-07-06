@@ -1,138 +1,65 @@
-import 'dart:io';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:methylene/theme/colors.dart';
 import 'package:methylene/theme/general.dart';
+import 'package:methylene/theme/standard.dart';
 import 'package:methylene/theme/syntax.dart';
 
 export 'package:methylene/theme/colors.dart';
-export 'package:methylene/theme/general.dart';
-export 'package:methylene/theme/syntax.dart';
+export 'package:methylene/theme/general.dart'
+    show
+      ThematicGeneral,
+      ThematicGeneralText,
+      ThematicGeneralGeometry,
+      ThematicGeneralGeometryInsets,
+      ThematicGeneralGeometryRounding,
+      ThematicGeneralFactorLevel;
+export 'package:methylene/theme/syntax.dart'
+    show
+      ThematicSyntax;
 
-late final Thematic _defaultTheme;
-bool _isInit = false;
-Future<Thematic> get getDefaultTheme async {
-  if (_isInit) {
-    return _defaultTheme;
+late final Thematic _theme;
+bool isUserThemeLoaded = false;
+bool errorSend = false;
+Thematic get theme {
+  if (isUserThemeLoaded) return _theme;
+  try {
+    return ThematicStandard.theme;
+  } finally {
+    if (!errorSend) {
+      errorSend = !errorSend;
+      throw ErrorDescription('The user theme isn\'t available. '
+          'Make sure you have successfully loaded the environment (it is including the theme).');
+    }
   }
-  _isInit = true;
-  return _defaultTheme = await Thematic.fromJson(
-      jsonDecode(
-          await rootBundle.loadString('assets/blueprint/theme/default_theme.json')
-      )
-  );
 }
-late final Thematic theme;
+Future<void> _loadTheme() async {
+  try {
+    _theme = await Thematic.fromJson(
+        jsonDecode(
+            await rootBundle.loadString('assets/blueprint/theme/default_theme.json')
+        )
+    );
+  } catch(_) {
+    throw ErrorDescription('Theme could\'nt be loaded: $_');
+  }
+}
 
 final class Thematic {
   final ThematicGeneral general;
   final ThematicColors colors;
   final ThematicSyntax syntax;
-  const Thematic._internal({
+  const Thematic({
     required this.general,
     required this.colors,
     required this.syntax,
   });
-  static Future<Thematic> fromFile(File file) async {
-    return fromJson(await file.readAsString());
-  }
-  static Thematic fromBlueprint() {
-
-  }
-  static Thematic fromJson(Map<String, dynamic>? json) {
-    Map<String, dynamic>? general = json?['general'];
-    Map<String, dynamic>? text = general?['text'];
-    Map<String, dynamic>? fontScaleFactorLevel = text?['font_scale_factor_level'];
-    Map<String, dynamic>? geometry = general?['geometry'];
-    Map<String, dynamic>? insets = geometry?['insets'];
-    Map<String, dynamic>? rounding = geometry?['rounding'];
-    return Thematic._internal(
-      general: ThematicGeneral(
-          symbolScaleFactor: general?['symbol_scale_factor'],
-          interfaceScaleFactor: general?['interface_scale_factor'],
-          text: ThematicGeneralText(
-              font: text?['font'],
-              fontScaleFactor: text?['font_scale_factor'],
-              fontScaleFactorLevel: ThematicGeneralFactorLevel(
-                  highest: fontScaleFactorLevel?['highest'],
-                  high: fontScaleFactorLevel?['high'],
-                  over: fontScaleFactorLevel?['over'],
-                  moderate: fontScaleFactorLevel?['moderate'],
-                  under: fontScaleFactorLevel?['under'],
-                  low: fontScaleFactorLevel?['low:'],
-                  lowest: fontScaleFactorLevel?['lowest'],
-              )),
-          geometry: ThematicGeneralGeometry(
-            insets: ThematicGeneralGeometryInsets(
-              factor: insets?['factor'],
-              factorLevel: insets?['factor_level']
-            ),
-            rounding: ThematicGeneralGeometryRounding(
-              factor: rounding?['factor'],
-              factorLevel: rounding?['factor_level']
-            )
-          ),
-      ),
-        colors: ThematicColors(
-
-        ),
-        syntax: null
+  static Thematic fromJson(Map<String, dynamic>? json)  {
+    return Thematic(
+        general: nonNullExtraction<ThematicGeneral>(ThematicGeneral.fromJson(json?['general']), theme.general),
+        colors: nonNullExtraction<ThematicColors>(ThematicColors.fromJson(json?['colors']), theme.colors),
+        syntax: nonNullExtraction<ThematicSyntax>(ThematicSyntax.fromJson(json?['syntax']), theme.syntax),
     );
   }
-  TextStyle text({double? size, Color? color, bool? bold}) => GoogleFonts.getFont(
-      general.text.font,
-      fontSize: general.text.,
-      color: color != null ? color : ThematicColors.text,
-      fontWeight: bold != null && bold == true ? FontWeight.bold : FontWeight.normal
-  );
-}
-Type getValueOrStandard<Type>(Type? value, Type standard) {
-  return value != null ? value : standard;
-}
-
-
-
-abstract final class ThematicGeometry {
-  static EdgeInsetsGeometry edgeInsets({
-    InsetsLevel? level,
-    InsetsLevel? levelVertical,
-    InsetsLevel? levelHorizontal
-  })
-  => level != null
-      ? EdgeInsets.all(level.value)
-      : EdgeInsets.symmetric(
-        vertical: levelVertical != null
-            ? levelVertical.value
-            : 0,
-        horizontal: levelHorizontal != null
-            ? levelHorizontal.value
-            : 0
-  );
-
-  static BorderRadiusGeometry borderRadius({
-    RoundedLevel? level,
-    RoundedLevel? levelTopLeft,
-    RoundedLevel? levelTopRight,
-    RoundedLevel? levelBottomLeft,
-    RoundedLevel? levelBottomRight,
-  })
-  => level != null
-      ? BorderRadius.all(Radius.circular(level.value))
-      : BorderRadius.only(
-      topLeft: levelTopLeft != null
-          ? Radius.circular(levelTopLeft.value)
-          : Radius.circular(0),
-      topRight: levelTopRight != null
-          ? Radius.circular(levelTopRight.value)
-          : Radius.circular(0),
-      bottomLeft: levelBottomLeft != null
-          ? Radius.circular(levelBottomLeft.value)
-          : Radius.circular(0),
-      bottomRight: levelBottomRight != null
-          ? Radius.circular(levelBottomRight.value)
-          : Radius.circular(0)
-  );
 }
